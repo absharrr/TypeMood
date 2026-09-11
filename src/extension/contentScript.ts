@@ -472,12 +472,15 @@ const createFloatingWidget = () => {
 
             <!-- Mood Audio Soundboard -->
             <div style="background: ${t.cardBg}; padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.06); font-size: 11px;">
-              <div style="font-weight: bold; color: ${t.text}; margin-bottom: 8px;">Audio Soundboard</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <div style="font-weight: bold; color: ${t.text};">Audio Soundboard & Selection</div>
+                <span style="font-size: 9px; color: #94a3b8; font-family: monospace;">Active 🔊</span>
+              </div>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                <button class="species-btn" id="snd-calm" style="text-align: left;">🌸 Bloom</button>
-                <button class="species-btn" id="snd-erratic" style="text-align: left;">🥀 Wobble</button>
-                <button class="species-btn" id="snd-rage" style="text-align: left; background: rgba(239,68,68,0.2); border-color: #ef4444;">🌋 Rumble</button>
-                <button class="species-btn" id="snd-idle" style="text-align: left;">💤 Lullaby</button>
+                <button class="species-btn" id="snd-calm" style="text-align: left; transition: all 0.2s; ${latestMood === 'CALM' ? `background: ${t.accent}; color: #020617; font-weight: 800; border: 1px solid ${t.accent};` : `background: rgba(255,255,255,0.05); color: ${t.text};`}">🌸 Bloom ${latestMood === 'CALM' ? '🔊' : ''}</button>
+                <button class="species-btn" id="snd-erratic" style="text-align: left; transition: all 0.2s; ${latestMood === 'ERRATIC' ? `background: #f59e0b; color: #020617; font-weight: 800; border: 1px solid #f59e0b;` : `background: rgba(255,255,255,0.05); color: ${t.text};`}">🥀 Wobble ${latestMood === 'ERRATIC' ? '🔊' : ''}</button>
+                <button class="species-btn" id="snd-rage" style="text-align: left; transition: all 0.2s; ${latestMood === 'RAGE' ? `background: #ef4444; color: #ffffff; font-weight: 800; border: 1px solid #ef4444;` : `background: rgba(255,255,255,0.05); color: ${t.text};`}">🌋 Rumble ${latestMood === 'RAGE' ? '🔊' : ''}</button>
+                <button class="species-btn" id="snd-idle" style="text-align: left; transition: all 0.2s; ${latestMood === 'IDLE' ? `background: #818cf8; color: #020617; font-weight: 800; border: 1px solid #818cf8;` : `background: rgba(255,255,255,0.05); color: ${t.text};`}">💤 Lullaby ${latestMood === 'IDLE' ? '🔊' : ''}</button>
               </div>
             </div>
           ` : activeTab === 'heatmap' ? `
@@ -583,16 +586,32 @@ const createFloatingWidget = () => {
 
     // Soundboard
     const sndCalm = shadow.querySelector('#snd-calm');
-    if (sndCalm) sndCalm.addEventListener('click', () => soundEffects.playMoodSound('CALM', true));
+    if (sndCalm) sndCalm.addEventListener('click', () => {
+      latestMood = 'CALM';
+      soundEffects.playMoodSound('CALM', true);
+      render();
+    });
 
     const sndErr = shadow.querySelector('#snd-erratic');
-    if (sndErr) sndErr.addEventListener('click', () => soundEffects.playMoodSound('ERRATIC', true));
+    if (sndErr) sndErr.addEventListener('click', () => {
+      latestMood = 'ERRATIC';
+      soundEffects.playMoodSound('ERRATIC', true);
+      render();
+    });
 
     const sndRage = shadow.querySelector('#snd-rage');
-    if (sndRage) sndRage.addEventListener('click', () => soundEffects.playMoodSound('RAGE', true));
+    if (sndRage) sndRage.addEventListener('click', () => {
+      latestMood = 'RAGE';
+      soundEffects.playMoodSound('RAGE', true);
+      render();
+    });
 
     const sndIdle = shadow.querySelector('#snd-idle');
-    if (sndIdle) sndIdle.addEventListener('click', () => soundEffects.playMoodSound('IDLE', true));
+    if (sndIdle) sndIdle.addEventListener('click', () => {
+      latestMood = 'IDLE';
+      soundEffects.playMoodSound('IDLE', true);
+      render();
+    });
   };
 
   render();

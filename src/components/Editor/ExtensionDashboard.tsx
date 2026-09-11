@@ -12,11 +12,80 @@ interface ExtensionDashboardProps {
 
 export const ExtensionDashboard: React.FC<ExtensionDashboardProps> = ({
   metrics,
+  currentMood,
   onOpenPrivacyModal,
 }) => {
-  const playSoundTest = (mood: MoodState) => {
-    soundEffects.playMoodSound(mood, true);
+  const [selectedMood, setSelectedMood] = React.useState<MoodState | null>(null);
+
+  // Active sound mood defaults to current live mood or last clicked test sound
+  const activeSoundMood = selectedMood || currentMood;
+
+  const playSoundTest = (targetMood: MoodState) => {
+    setSelectedMood(targetMood);
+    soundEffects.playMoodSound(targetMood, true);
   };
+
+  const soundOptions: Array<{
+    id: MoodState;
+    title: string;
+    subtitle: string;
+    icon: React.ReactNode;
+    color: string;
+    activeBorder: string;
+    activeBg: string;
+    badgeColor: string;
+  }> = [
+    {
+      id: 'CALM',
+      title: '🌸 Bloom Chime',
+      subtitle: 'Calm / Steady',
+      icon: <Sparkles className="w-3.5 h-3.5 text-emerald-400" />,
+      color: 'text-emerald-300',
+      activeBorder: 'border-emerald-400 ring-2 ring-emerald-400/80 shadow-emerald-900/50',
+      activeBg: 'bg-emerald-500/25',
+      badgeColor: 'bg-emerald-400 text-slate-950',
+    },
+    {
+      id: 'ERRATIC',
+      title: '🥀 Wobble Pitch',
+      subtitle: 'Erratic / Jitter',
+      icon: <Volume2 className="w-3.5 h-3.5 text-amber-400" />,
+      color: 'text-amber-300',
+      activeBorder: 'border-amber-400 ring-2 ring-amber-400/80 shadow-amber-900/50',
+      activeBg: 'bg-amber-500/25',
+      badgeColor: 'bg-amber-400 text-slate-950',
+    },
+    {
+      id: 'RAGE',
+      title: '🌋 Bass Rumble',
+      subtitle: 'Rage Burst',
+      icon: <Zap className="w-3.5 h-3.5 text-rose-400" />,
+      color: 'text-rose-300',
+      activeBorder: 'border-rose-400 ring-2 ring-rose-400/80 shadow-rose-900/50',
+      activeBg: 'bg-rose-500/25',
+      badgeColor: 'bg-rose-400 text-slate-950',
+    },
+    {
+      id: 'IDLE',
+      title: '💤 Nap Lullaby',
+      subtitle: 'Idle / Sleeping',
+      icon: <Volume2 className="w-3.5 h-3.5 text-indigo-400" />,
+      color: 'text-indigo-300',
+      activeBorder: 'border-indigo-400 ring-2 ring-indigo-400/80 shadow-indigo-900/50',
+      activeBg: 'bg-indigo-500/25',
+      badgeColor: 'bg-indigo-400 text-slate-950',
+    },
+    {
+      id: 'RECOVERING',
+      title: '🌱 Heal Chord',
+      subtitle: 'Recovering',
+      icon: <Sparkles className="w-3.5 h-3.5 text-sky-400" />,
+      color: 'text-sky-300',
+      activeBorder: 'border-sky-400 ring-2 ring-sky-400/80 shadow-sky-900/50',
+      activeBg: 'bg-sky-500/25',
+      badgeColor: 'bg-sky-400 text-slate-950',
+    },
+  ];
 
   return (
     <div className="flex flex-col space-y-5">
@@ -64,67 +133,41 @@ export const ExtensionDashboard: React.FC<ExtensionDashboardProps> = ({
       <div className="glass-panel p-5 rounded-3xl space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 text-slate-200 font-bold text-sm">
-            <Volume2 className="w-4 h-4 text-amber-400" />
-            <span>Mood Audio Soundboard</span>
+            <Volume2 className="w-4 h-4 text-amber-400 animate-bounce" />
+            <span>Mood Audio Soundboard & Selection</span>
           </div>
-          <span className="text-[11px] text-slate-400 font-mono">Click to test sounds</span>
+          <span className="text-[11px] text-slate-400 font-mono">Active sound highlights live</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          <button
-            onClick={() => playSoundTest('CALM')}
-            className="p-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-2xl text-left transition-all group"
-          >
-            <div className="text-xs font-bold text-emerald-300 flex items-center justify-between">
-              <span>🌸 Bloom Chime</span>
-              <Sparkles className="w-3 h-3 text-emerald-400 group-hover:scale-125 transition-transform" />
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono mt-0.5">Calm / Steady</div>
-          </button>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          {soundOptions.map((opt) => {
+            const isHighlighted = activeSoundMood === opt.id;
+            return (
+              <button
+                key={opt.id}
+                onClick={() => playSoundTest(opt.id)}
+                className={`p-3 rounded-2xl text-left transition-all duration-300 relative group flex flex-col justify-between border ${
+                  isHighlighted
+                    ? `${opt.activeBg} ${opt.activeBorder} shadow-lg scale-[1.02]`
+                    : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/60'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className={`text-xs font-bold ${opt.color}`}>{opt.title}</span>
+                  <div className="group-hover:scale-125 transition-transform">{opt.icon}</div>
+                </div>
 
-          <button
-            onClick={() => playSoundTest('ERRATIC')}
-            className="p-2.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-2xl text-left transition-all group"
-          >
-            <div className="text-xs font-bold text-amber-300 flex items-center justify-between">
-              <span>🥀 Wobble Pitch</span>
-              <Volume2 className="w-3 h-3 text-amber-400 group-hover:scale-125 transition-transform" />
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono mt-0.5">Erratic / Jitter</div>
-          </button>
-
-          <button
-            onClick={() => playSoundTest('RAGE')}
-            className="p-2.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-2xl text-left transition-all group"
-          >
-            <div className="text-xs font-bold text-rose-300 flex items-center justify-between">
-              <span>🌋 Bass Rumble</span>
-              <Zap className="w-3 h-3 text-rose-400 group-hover:scale-125 transition-transform" />
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono mt-0.5">Rage Burst</div>
-          </button>
-
-          <button
-            onClick={() => playSoundTest('IDLE')}
-            className="p-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-2xl text-left transition-all group"
-          >
-            <div className="text-xs font-bold text-indigo-300 flex items-center justify-between">
-              <span>💤 Nap Lullaby</span>
-              <Volume2 className="w-3 h-3 text-indigo-400 group-hover:scale-125 transition-transform" />
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono mt-0.5">Idle / Sleeping</div>
-          </button>
-
-          <button
-            onClick={() => playSoundTest('RECOVERING')}
-            className="p-2.5 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 rounded-2xl text-left transition-all group"
-          >
-            <div className="text-xs font-bold text-sky-300 flex items-center justify-between">
-              <span>🌱 Heal Chord</span>
-              <Sparkles className="w-3 h-3 text-sky-400 group-hover:scale-125 transition-transform" />
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono mt-0.5">Recovering</div>
-          </button>
+                <div className="flex items-center justify-between mt-2 pt-1 border-t border-white/5">
+                  <span className="text-[10px] text-slate-400 font-mono">{opt.subtitle}</span>
+                  {isHighlighted && (
+                    <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase ${opt.badgeColor}`}>
+                      🔊 Active
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
