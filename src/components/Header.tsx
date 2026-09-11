@@ -1,6 +1,6 @@
 import React from 'react';
 import { PlantSpecies } from '../types/typing';
-import { ShieldCheck, Sprout, Settings, Calendar, CloudSun, HeartPulse, ExternalLink } from 'lucide-react';
+import { ShieldCheck, Sprout, Settings, Calendar, CloudSun, HeartPulse, ExternalLink, Download } from 'lucide-react';
 
 interface HeaderProps {
   species: PlantSpecies;
@@ -57,6 +57,17 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Status Pills & Navigation Tabs */}
         <div className="flex items-center space-x-2 sm:space-x-3 overflow-x-auto py-1">
+          {/* Download Extension (.zip) Button */}
+          <a
+            href="/typemood-extension.zip"
+            download="typemood-extension.zip"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-slate-950 rounded-full font-bold text-xs shadow-md shadow-emerald-950/40 transition-all shrink-0"
+            title="Download Chrome Extension (.zip) to install in Chrome"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-950" />
+            <span>Download Extension (.zip)</span>
+          </a>
+
           {/* Open Big Window Button */}
           <button
             onClick={handleOpenBigWindow}
